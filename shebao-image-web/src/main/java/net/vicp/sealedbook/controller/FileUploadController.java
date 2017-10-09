@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,10 +38,11 @@ public class FileUploadController {
 
         LogUtils.info(LOG, "接收到文件", "originalFileName", file.getOriginalFilename());
 
+        /** 文件写入DFS并获得path */
         String filePath = FastDFSClient.uploadFile(file.getBytes(), file.getOriginalFilename());
         LogUtils.debug(LOG, "文件写入FastDFS", "filePath", filePath);
 
-        if(null == filePath) {
+        if(!StringUtils.hasText(filePath)) {
             return "上传失败";
         }
         String fileCode = UUID.randomUUID().toString().replaceAll("-", "");
